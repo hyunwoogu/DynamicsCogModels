@@ -21,6 +21,27 @@ function(input, output, session) {
     temp
   })
   
+  output$info1 = renderText({
+    if (input$Form == "lin") {
+      res = "y = a - bx"
+    } else if (input$Form == "exp") {
+      res = "y = a * exp(-bx)"
+    } else if (input$Form == "hyp") {
+      res = "y = 1/(a + b*x)"
+    } else if (input$Form == "log") {
+      res = "y = a - b * log(x)"
+    } else if (input$Form == "pow") {
+      res = "y = a * x^(-b)"
+    } else if (input$Form == "exp_pow") {
+      res = "y = a * exp^(-2b * x^(1/2))"
+    }
+    
+    additional = NULL
+    if (input$Asym == "Asym") additional = "Fitted to Asymptote 0.5"
+    
+    paste0(res, '\n', additional)
+    
+  })
   
   output$plot = renderPlot({
     
@@ -37,7 +58,7 @@ function(input, output, session) {
     } else if (input$Form == "pow") {
       predicts = input$a_val * support^(-input$b_val)
     } else if (input$Form == "exp_pow") {
-      predcits = input$a_val * exp(-2 * input$b_val * sqrt(support))
+      predicts = input$a_val * exp(-2 * input$b_val * sqrt(support))
     }
     
     if (input$Asym == "Asym") predicts = 1 - 1/(predicts + 2)
@@ -46,7 +67,7 @@ function(input, output, session) {
                        pred = predicts)
     
     p = ggplot(data=plotData(), aes(x=x, y=y)) + 
-      geom_point(colour="black", size=2) + 
+      geom_point(colour="black", size=4) + 
       geom_line(data=newDF, 
                 aes(x=supp, y=pred), 
                 color='blue', size=2) +
