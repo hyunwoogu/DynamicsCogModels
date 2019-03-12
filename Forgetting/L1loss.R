@@ -30,10 +30,14 @@ sumAD_exppw = function(par, x, y){
 
 methodLists = c("lin", "exp", "hyp", "log", "pow", "exppw")
 
+wantX = x1
+wantY = y1
+
 for (i in methodLists){
   if (i == "lin") cat("Name\t\ta\tb\tloss\n")
   function_name = sprintf("sumAD_%s", i)
-  res = optim(par = rnorm(2,sd=.1), fn = get(function_name), x=x1, y=y1)
+  res = optim(par = rnorm(2,sd=.1), fn = get(function_name), x=wantX, y=wantY)
+  while (i == "hyp" & abs(res$par[1]) > 1) res = optim(par = rnorm(2,sd=.1), fn = get(function_name), x=wantX, y=wantY)
   cat(i, "\t\t", round(res$par[1], 3), "\t", round(res$par[2], 3), "\t", round(res$value,4), "\n")
   
 }
