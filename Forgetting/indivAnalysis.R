@@ -72,6 +72,9 @@ points(realX, realY)
 points(realX, sampleY1, col='red')
 points(realX, sampleY2, col='blue')
 
+legend(10, 1, legend=c("Subject 1", "Subject 2"),
+       lty=1, col=c("red", "blue"), cex=1.1)
+
 resY1 = resY2 = NA
 
 while (c(is.na(resY1))[1] | c(is.na(resY2))[1]) {
