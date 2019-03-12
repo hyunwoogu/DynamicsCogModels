@@ -1,0 +1,12 @@
+name: Forget
+title: Forget
+username:
+account: gentlewalk
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 783264
+bundleId: 1932602
+url: https://gentlewalk.shinyapps.io/Forget/
+when: 1552365025.3625
+asMultiple: FALSE
+asStatic: FALSE

@@ -28,7 +28,7 @@ fluidPage(
                                   "Hyperbolic" = "hyp",
                                   "Logarithmic" = "log",
                                   "Power" = "pow",
-                                  "Exponential-Power", "exp_pow"), 
+                                  "Exponential-Power" = "exp_pow"), 
                    selected = "lin"),
       
       radioButtons("Asym", label = h3("Asymptote = 0.5"),
@@ -45,7 +45,8 @@ fluidPage(
     ),
     
     mainPanel(
-      plotOutput("plot")
+      plotOutput("plot"),
+      verbatimTextOutput("info1")
     )
   )
 )
