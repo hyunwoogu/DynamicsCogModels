@@ -21,7 +21,7 @@
 
 \begin{document}
 
-\title{\textbf{Derivation of Simple Harmonic Motion Equation}}
+\title{\textbf{Derivation of \\ Restorating Force Equation}}
 \author{Hyunwoo Gu}
 \date{}
 
@@ -32,7 +32,7 @@
 %----------------------------------------------------------------------------------------
 \section*{Prerequisites}
 
-\subsection{Characteristic equation}
+\subsection*{1. Characteristic equation}
 
 \textbf{Characteristic equation} is an algebraic equation of degree $n$ upon which depends the solution of a given $n$th-order differential equation. 
 
@@ -42,10 +42,10 @@ $$
 y'' - 4y' + 3y = 0
 $$
 
-by change of function (which is valid due to \textbf{Picard–Lindelöf theorem of initial value problems}),
+by change of function (which is valid due to Picard - Lindelof theorem of initial value problems),
 
 $$
-y(t) := c \dot e^{\theta t}
+y(t) := c \cdot e^{\theta t}
 $$
 
 we can obtain
@@ -54,17 +54,20 @@ $$
 \theta^2 - 4\theta + 3 = 0
 $$
 
-By solving for $\theta$, we get the solution of DE. 
+By solving for $\theta$, we get the solution of DE,
 
-\subsection{Euler's formula}
+$$
+y(t) = c_1 e^t + c_2 e^{3t}
+$$
+
+\pagebreak
+\subsection*{2. Euler's formula}
 
 $$
 e^{ix} = \mathrm{cos}(x) + i \mathrm{sin}(x)
 $$
 
-\textbf{Proof}
-
-By Maclaurin series expansion, 
+\textbf{Proof}) By Maclaurin series expansion, 
 
 $$
 \begin{aligned}
@@ -75,25 +78,19 @@ e^{ix} &= 1 + ix + \frac{(ix)^2}{2!} + \frac{(ix)^3}{3!} + \frac{(ix)^4}{4!} + \
 $$
 
 
-\subsection{Product rule}
+\subsection*{3. Product rule}
 
 $$
-\frac{d}{dx} \left( u \dot v \right) = \left( \frac{du}{dx} \right) v + u  \left( \frac{dv}{dx} \right)
+\frac{d}{dx} \left( u \cdot v \right) = \left( \frac{du}{dx} \right) v + u  \left( \frac{dv}{dx} \right)
 $$
 
-\scripsize
-(Reference: https://en.wikipedia.org/wiki/Product_rule)
-\normalsize
 
-\subsection{Chain rule}
+
+\subsection*{4. Chain rule}
 
 $$
-\frac{dz}{dx} = \frac{dz}{dy} \dot \frac{dy}{dx}
+\frac{dz}{dx} = \frac{dz}{dy} \cdot \frac{dy}{dx}
 $$
-
-\scripsize
-(Reference: https://en.wikipedia.org/wiki/Chain_rule)
-\normalsize
 
 
 %----------------------------------------------------------------------------------------
@@ -101,6 +98,10 @@ $$
 %----------------------------------------------------------------------------------------
 \pagebreak
 \section*{Basic approach}
+
+\bigskip
+\bigskip
+
 
 $$
 m \ddot{x} + k x = 0
@@ -129,7 +130,14 @@ x(t) &= c_1 e^{i \omega t} + c_2 e^{-i \omega t} \\[8pt]
 \end{aligned}
 $$
 
-where $\omega := \sqrt{k/m}$. Note that $d_1, d_2 \in \mathbb{R}$. The last line is due to the fact that the \textbf{linear combination of sinusoids are again sinusoids}, but with a new amplitude and phase shift.
+where $\omega := \sqrt{k/m}$. Note that $d_1, d_2 \in \mathbb{R}$. 
+
+\bigskip
+
+The last line is due to the fact that the \textbf{linear combination of sinusoids are again sinusoids}, but with a new amplitude and phase shift.
+
+\bigskip
+\bigskip
 
 Interpretation : $\omega = \sqrt{k/m}$ as \textbf{frequency}, $A = \sqrt{d_1^2 + d_2^2} $ as \textbf{amplitude}, and $\delta$ as \textbf{phase angle}.  
 
@@ -150,43 +158,46 @@ By multiplying $\dot{x}$ to the above equation, we can see
 
 $$
 \begin{aligned}
-m \ddot{x} \dot{x} + k x \dot{x} &= 0 \\[10pt]
-m \frac{d}{dt} \left( \frac{dx}{dt} \right) \dot \frac{dx}{dt} + k x \frac{dx}{dt} = 0
+&m \ddot{x} \dot{x} + k x \dot{x} = 0 \\[10pt]
+&m \frac{d}{dt} \left( \frac{dx}{dt} \right) \cdot \frac{dx}{dt} + k x \frac{dx}{dt} = 0
 \end{aligned}
 $$
 
 Since 
 
-\begin{itemize}
-	\item $\frac{d}{dt} \left( \frac{dx}{dt} \right) \dot \frac{dx}{dt} = \frac{1}{2} \left[ \frac{d}{dt} \left( \frac{dx}{dt} \right) \dot \frac{dx}{dt} + \frac{dx}{dt} \dot  \frac{d}{dt} \left( \frac{dx}{dt} \right) \right] = \frac{d}{dt} \left( \left( \frac{dx}{dt} \right)^2 \right) $
-	\item $x \frac{dx}{dt} = \frac{d (x^2/2) }{dx} \dot \frac{dx}{dt} = \frac{d (x^2/2)}{dt}$
-\end{itemize}
+$$\frac{d}{dt} \left( \frac{dx}{dt} \right) \cdot \frac{dx}{dt} = \frac{1}{2} \left[ \frac{d}{dt} \left( \frac{dx}{dt} \right) \cdot \frac{dx}{dt} + \frac{dx}{dt} \cdot  \frac{d}{dt} \left( \frac{dx}{dt} \right) \right] = \frac{d}{dt} \left( \left( \frac{dx}{dt} \right)^2 \right) $$
+
+and 
+
+$$x \frac{dx}{dt} = \frac{d (x^2/2) }{dx} \cdot \frac{dx}{dt} = \frac{d (x^2/2)}{dt}$$
+
+\bigskip
 
 we get the following \textbf{energy conservation law} formula, with the first term being the kinetic energy, and the second term being the potential energy of the spring.
 
 $$
 \begin{aligned}
-\int \frac{m}{2} \frac{d}{dt} \left( \left( \frac{dx}{dt} \right)^2 \right) dt + \int k \frac{d (x^2/2)}{dt} dt &= E\\[10pt]
-m \frac{(\dot{x})^2}{2} + k\frac{x^2}{2} &= E \\[12pt]
+\int \frac{m}{2} \frac{d}{dt} \left( \left( \frac{dx}{dt} \right)^2 \right) dt &+ \int k \frac{d (x^2/2)}{dt} dt = E\\[10pt]
+m \frac{(\dot{x})^2}{2} &+ k\frac{x^2}{2} = E \\[12pt]
 \end{aligned}
 $$
 
+\pagebreak
 If we proceed, 
 
 $$
 \begin{aligned}
-m \frac{(\dot{x})^2}{2} + k\frac{x^2}{2} &= E \\[12pt]
-\dot{x} &= \pm \sqrt{\frac{2E}{m} - \frac{k}{m} x^2 } \\[10pt]
-\frac{dx}{\sqrt{\frac{2E}{m} - \frac{k}{m} x^2 }} &= \pm dt \\[10pt]
-\mathrm{arccos} x \sqrt{k}{2E} &= \sqrt{\frac{k}{m}}t + \phi \\[10pt]
+&m \frac{(\dot{x})^2}{2} + k\frac{x^2}{2} = E \\[12pt]
+&\dot{x} = \pm \sqrt{\frac{2E}{m} - \frac{k}{m} x^2 } \\[10pt]
+&\frac{dx}{\sqrt{\frac{2E}{m} - \frac{k}{m} x^2 }} = \pm dt \\[10pt]
+&\therefore \ \ \mathrm{arccos} \left(x \sqrt{\frac{k}{2E}} \right) =  \pm \sqrt{\frac{k}{m}}t + \phi \\[10pt]
 x &= \sqrt{\frac{2E}{k}} \mathrm{cos}(\omega t + \phi)
 \end{aligned}
 $$
 
-since $\frac{d}{dx} \mathrm{arccos}(x) = \frac{1}{ \sqrt{1 - x^2}}$
+\bigskip
+\bigskip
 
-
-(Reference : https://en.wikibooks.org/wiki/Ordinary_Differential_Equations/Simple_Harmonic_Motion)
-
+since $$\frac{d}{dx} \mathrm{arccos} (x) = \frac{1}{\sqrt{1-x^2}}$$
 
 \end{document}
