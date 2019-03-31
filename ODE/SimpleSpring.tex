@@ -1,0 +1,192 @@
+
+\documentclass[12pt]{article} 
+
+\usepackage{geometry}
+\geometry{a4paper} 
+
+\usepackage{graphicx} 
+
+\usepackage{float} 
+\usepackage{wrapfig} 
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{dsfont}
+
+\linespread{1.2} 
+
+\setlength\parindent{0pt} % Uncomment to remove all indentation from paragraphs
+
+
+\begin{document}
+
+\title{\textbf{Derivation of Simple Harmonic Motion Equation}}
+\author{Hyunwoo Gu}
+\date{}
+
+\maketitle
+
+%----------------------------------------------------------------------------------------
+%	Prerequisites
+%----------------------------------------------------------------------------------------
+\section*{Prerequisites}
+
+\subsection{Characteristic equation}
+
+\textbf{Characteristic equation} is an algebraic equation of degree $n$ upon which depends the solution of a given $n$th-order differential equation. 
+
+For example, for the following DE problem,
+
+$$
+y'' - 4y' + 3y = 0
+$$
+
+by change of function (which is valid due to \textbf{Picard–Lindelöf theorem of initial value problems}),
+
+$$
+y(t) := c \dot e^{\theta t}
+$$
+
+we can obtain
+
+$$
+\theta^2 - 4\theta + 3 = 0
+$$
+
+By solving for $\theta$, we get the solution of DE. 
+
+\subsection{Euler's formula}
+
+$$
+e^{ix} = \mathrm{cos}(x) + i \mathrm{sin}(x)
+$$
+
+\textbf{Proof}
+
+By Maclaurin series expansion, 
+
+$$
+\begin{aligned}
+e^{ix} &= 1 + ix + \frac{(ix)^2}{2!} + \frac{(ix)^3}{3!} + \frac{(ix)^4}{4!} + \frac{(ix)^5}{5!} \cdots \\[10pt]
+&= \left( 1 - \frac{x^2}{2!} + \frac{x^4}{4!} + \cdots \right) + i\left(  x - \frac{x^3}{3!} + \frac{x^5}{5!}  + \cdots \right) \\[10pt]
+&= \mathrm{cos}(x) + i \mathrm{sin}(x)
+\end{aligned}
+$$
+
+
+\subsection{Product rule}
+
+$$
+\frac{d}{dx} \left( u \dot v \right) = \left( \frac{du}{dx} \right) v + u  \left( \frac{dv}{dx} \right)
+$$
+
+\scripsize
+(Reference: https://en.wikipedia.org/wiki/Product_rule)
+\normalsize
+
+\subsection{Chain rule}
+
+$$
+\frac{dz}{dx} = \frac{dz}{dy} \dot \frac{dy}{dx}
+$$
+
+\scripsize
+(Reference: https://en.wikipedia.org/wiki/Chain_rule)
+\normalsize
+
+
+%----------------------------------------------------------------------------------------
+%	Simple Solution
+%----------------------------------------------------------------------------------------
+\pagebreak
+\section*{Basic approach}
+
+$$
+m \ddot{x} + k x = 0
+$$
+
+The \textbf{characteristic equation} for the above ODE is 
+
+$$
+m \theta^2 + k = 0
+$$ 
+
+which has complex roots
+
+$$
+\theta = \pm i \sqrt{k/m}
+$$
+
+Thus, the solution is given by
+
+$$
+\begin{aligned}
+x(t) &= c_1 e^{i \omega t} + c_2 e^{-i \omega t} \\[8pt]
+&= c_1 (\mathrm{cos} (\omega t) + i \mathrm{sin} (\omega t)) + c_2 (\mathrm{cos} (\omega t) - i \mathrm{sin} (\omega t)) \\[8pt]
+&= d_1 \mathrm{cos} (\omega t) + d_2 \mathrm{sin} (\omega t) \\[8pt]
+&= A \mathrm{cos} (\omega t + \delta)
+\end{aligned}
+$$
+
+where $\omega := \sqrt{k/m}$. Note that $d_1, d_2 \in \mathbb{R}$. The last line is due to the fact that the \textbf{linear combination of sinusoids are again sinusoids}, but with a new amplitude and phase shift.
+
+Interpretation : $\omega = \sqrt{k/m}$ as \textbf{frequency}, $A = \sqrt{d_1^2 + d_2^2} $ as \textbf{amplitude}, and $\delta$ as \textbf{phase angle}.  
+
+
+
+\pagebreak
+%----------------------------------------------------------------------------------------
+%	Advanced approach
+%----------------------------------------------------------------------------------------
+
+\section*{Advanced approach}
+
+$$
+m \ddot{x} + k x = 0
+$$
+
+By multiplying $\dot{x}$ to the above equation, we can see
+
+$$
+\begin{aligned}
+m \ddot{x} \dot{x} + k x \dot{x} &= 0 \\[10pt]
+m \frac{d}{dt} \left( \frac{dx}{dt} \right) \dot \frac{dx}{dt} + k x \frac{dx}{dt} = 0
+\end{aligned}
+$$
+
+Since 
+
+\begin{itemize}
+	\item $\frac{d}{dt} \left( \frac{dx}{dt} \right) \dot \frac{dx}{dt} = \frac{1}{2} \left[ \frac{d}{dt} \left( \frac{dx}{dt} \right) \dot \frac{dx}{dt} + \frac{dx}{dt} \dot  \frac{d}{dt} \left( \frac{dx}{dt} \right) \right] = \frac{d}{dt} \left( \left( \frac{dx}{dt} \right)^2 \right) $
+	\item $x \frac{dx}{dt} = \frac{d (x^2/2) }{dx} \dot \frac{dx}{dt} = \frac{d (x^2/2)}{dt}$
+\end{itemize}
+
+we get the following \textbf{energy conservation law} formula, with the first term being the kinetic energy, and the second term being the potential energy of the spring.
+
+$$
+\begin{aligned}
+\int \frac{m}{2} \frac{d}{dt} \left( \left( \frac{dx}{dt} \right)^2 \right) dt + \int k \frac{d (x^2/2)}{dt} dt &= E\\[10pt]
+m \frac{(\dot{x})^2}{2} + k\frac{x^2}{2} &= E \\[12pt]
+\end{aligned}
+$$
+
+If we proceed, 
+
+$$
+\begin{aligned}
+m \frac{(\dot{x})^2}{2} + k\frac{x^2}{2} &= E \\[12pt]
+\dot{x} &= \pm \sqrt{\frac{2E}{m} - \frac{k}{m} x^2 } \\[10pt]
+\frac{dx}{\sqrt{\frac{2E}{m} - \frac{k}{m} x^2 }} &= \pm dt \\[10pt]
+\mathrm{arccos} x \sqrt{k}{2E} &= \sqrt{\frac{k}{m}}t + \phi \\[10pt]
+x &= \sqrt{\frac{2E}{k}} \mathrm{cos}(\omega t + \phi)
+\end{aligned}
+$$
+
+since $\frac{d}{dx} \mathrm{arccos}(x) = \frac{1}{ \sqrt{1 - x^2}}$
+
+
+(Reference : https://en.wikibooks.org/wiki/Ordinary_Differential_Equations/Simple_Harmonic_Motion)
+
+
+\end{document}
