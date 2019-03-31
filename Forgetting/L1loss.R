@@ -1,6 +1,7 @@
 ######################################################################
 ## L1 loss
-setwd("/Users/hyunwoogu/Dropbox/2019Spring/Dynamics/DynamicsCogModels/Forgetting/")
+FilePath = "/Users/hyunwoogu/Dropbox/2019Spring/Dynamics/DynamicsCogModels/Forgetting/"
+setwd(FilePath)
 source("functions.R")
 
 sumAD_lin = function(par, x, y){
