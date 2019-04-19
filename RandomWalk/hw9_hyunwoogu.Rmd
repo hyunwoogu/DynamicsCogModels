@@ -1,0 +1,62 @@
+---
+title: "Homework #9"
+author: "Hyunwoo Gu"
+date: "4/16/2019"
+output: 
+  pdf_document:
+    keep_tex: yes
+---
+
+# Using `R`
+
+This approach saves all the samples in a trace into memory, and take `mean` and `variance` from the saved memory.
+
+## Definition of trace generation and summary function
+
+The following `traceMeanVar` function generates and summarises a trace.
+
+```{r}
+traceMeanVar = function(p, num_traces, N=100, legend=T){
+  # step1. generate samples
+  samples = NULL ## initialize history
+  for (trace in 1:num_traces){
+    X = cumsum(sample(c(1,-1), size=N, prob=c(p,1-p), replace=T)) ## sample trace
+    samples = cbind(samples, X) ## accumulate traces to history
+  }
+  
+  # step2. plot and print mean and variance
+  colnames(samples) = sprintf("S%d",1:num_traces) ## label samples "S1","S2",...
+  matplot(samples, col=1:num_traces, lty=1, type="l", xlab="N",ylab="S(N)") ## plot
+  print(apply(samples, 2, function(x) {setNames(c(mean(x), var(x)), c("Mean", "Var"))}))
+  if (legend==T) legend("bottomleft", legend=colnames(samples), col=1:num_traces, lty=1)
+}
+```
+
+\pagebreak
+## Problem 1.
+
+For $p=0.5$ case, we can do as follows:
+
+```{r}
+set.seed(190416)
+traceMeanVar(p=0.5, num_traces=3)
+```
+
+
+## Problem 2. 
+
+For $p=0.55$ case, we can do as follows:
+
+```{r}
+set.seed(190416)
+traceMeanVar(p=0.55, num_traces=3)
+```
+
+
+\pagebreak
+
+# Using `C++`
+
+Without the need to save a trace, this approach calculates `online` version of **mean** and **variance** as a new element in the trace is sampled. In this approach, `multithreading` is implemented, thus efficiently calculates each line of traces simultaneously. 
+
+The following is a trace generating and summarising function.
