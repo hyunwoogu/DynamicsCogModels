@@ -1,0 +1,294 @@
+---
+title: "Some Replications of HanesCarpenter(1999)"
+author: "Hyunwoo Gu"
+date: "5/7/2019"
+output: pdf_document
+---
+
+# Disclamier
+
+Here I replicated some results of _Hanes \& Carpenter(1999)_ for the subject named **DH**. 
+
+\pagebreak
+# Data \& Figures
+
+## Latency distribution of DH 
+
+The following data were read from the **Fig. 2**.
+
+```{r}
+Time = c(170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300,  310,  320, 330, 340)
+HC   = c(0.3, 2,   7,   16,  31,  48,  62,  70,  80,  86,  92,  94,  96,  97.5, 99.1, 99.6, NA, NA)
+LC   = c(NA , 0.3, 1.2, 3,   8,   18,  27,  38,  52,  61,  72,  79,  84,  90,   96,   98,  99.1, 99.7)
+
+x_ticks = c(150, 200, 300, 500, 1000)
+y_ticks = c(0.1,0.5,1,2,5,10,20,30,40,50,60,70,80,90,95,98,99,99.5,99.9)
+```
+
+The following is the latency distribution plot in original scale. 
+
+```{r}
+plot(Time, HC, pch=16, main="Latency Distribution of DH", 
+     xlab="Sccadic Latency(ms)", ylab="Cumulative probability")
+points(Time, LC, pch=1)
+legend("bottomright", legend=c("High Contrast", "Low Contrast"),
+       pch=c(16,1), box.lty=0)
+```
+
+\pagebreak
+## Reciprobit plot of Latency distribution of DH
+
+This is the replication of **Fig. 2**.
+
+```{r, warning = FALSE}
+invTime   = 1/Time ## transfrom x axis into reciprocal scale
+HC_probit = qnorm(HC/100); LC_probit = qnorm(LC/100) ## transfrom y axis into probit scale
+
+## High contrast plot (without x/y labels)
+plot(invTime, HC_probit, 
+     xlim=rev(range(invTime)), pch=16, labels = FALSE,  ## plz ignore warnings... 
+     main="Latency Distribution of DH", xlab="Sccadic Latency(ms)", ylab="Cumulative probability")
+
+## Low contrast plot
+points(invTime, LC_probit, xlim=rev(range(1/Time)), pch=1)
+legend("bottomright", legend=c("High Contrast", "Low Contrast"),
+       pch=c(16,1), box.lty=0)
+
+## Add median line / labels
+abline(h=qnorm(50/100)) # add median line
+axis(1, at = 1/x_ticks, labels=x_ticks, tick=T) # add x labels
+axis(2, at = qnorm(y_ticks/100), labels = y_ticks, tick=T) # add y labels
+```
+
+\pagebreak
+## Inhibition function of DH
+
+The following data were read from the **Fig. 3**.
+
+```{r}
+Delta      = c(0,   50,  90,  130, 170, 210)
+HC_inhibit = c(.01, .08, .45, .82, .98, NA)
+LC_inhibit = c(NA,  .02, .18, .54, .88, .99)
+```
+
+The following is plot of Inhibition function of DH
+
+```{r}
+plot(Delta, HC_inhibit, pch=16, 
+     main="Inhibition function of DH", 
+     xlab=paste(expression(delta), "(ms)"), ylab=expression(P(delta)))
+lines(Delta, HC_inhibit)
+points(Delta, LC_inhibit, pch=1)
+lines(Delta, LC_inhibit)
+```
+
+\pagebreak
+# Recovery of the original data
+
+There is no raw data provided. Rather, only thing we can find is **cumulative distributions**. Therefore, here I recovered the original data through the method of **inverse transform sampling**, i.e. we can generate the original data $X$ from
+
+$$
+F_X^{-1} (U) 
+$$
+
+where $F_X(\cdot)$ denotes the CDF of $X$, and $U \sim Unif(0,1)$
+
+
+## Recovery of control trial data of DH
+
+First, let us start with approximating the `CDF` and the `inverse CDF` of the control trial data of DH. CDFs for `high constrast` and `low constrast` were approximated using **linear interpolation**. And the `inverse CDF` were approximated via **bisection method** and then **vectorized**. 
+
+```{r}
+cdf_HC = approxfun(Time, HC/100, method="linear", rule=2)
+inv_cdf_HC = function(y){uniroot(function(x){cdf_HC(x)-y},interval=c(150,400))$root}
+inv_cdf_HC = Vectorize(inv_cdf_HC)
+
+cdf_LC = approxfun(Time, LC/100, method="linear", rule=2)
+inv_cdf_LC = function(y){uniroot(function(x){cdf_LC(x)-y},interval=c(150,400))$root}
+inv_cdf_LC = Vectorize(inv_cdf_LC)
+```
+
+Next, let us apporximate the original control trial data of DH from $F_X^{-1} (U)$. For convenience, assume the number of trials $N=1000$.
+
+```{r}
+U = runif(1000,0.01,0.99) 
+HC_sample = inv_cdf_HC(U)
+LC_sample = inv_cdf_LC(U)
+```
+
+Finally, let us do **sanity checks**. Note that the following **mean** values are close to what is given in **table 1**.
+
+```{r}
+mean(HC_sample); mean(LC_sample); 
+```
+
+Moreover, we can observer that the distribution of **RT** from the simulated data look **right-skewed**, which is characteristic of **response time** data. 
+
+```{r}
+par(mfrow=c(1,2))
+plot(density(HC_sample), main="High constrast recovered")
+plot(density(LC_sample), main="Low constrast recovered")
+```
+
+
+\pagebreak
+# Estimation of SSRT
+
+Estimation of **stop signal response time(SSRT)** can be done through two methods, **1) method of integration** and **2) method of difference of means**
+
+## Method 1. integration
+
+This method is trickier than the latter, since this requires **numerical integration**. 
+
+First, let us approximate the above density functions in an explicit way, by linear interpolation.
+
+```{r}
+HC_dens_function = approxfun(density(HC_sample)$x, density(HC_sample)$y, method="linear", rule=2)
+LC_dens_function = approxfun(density(LC_sample)$x, density(LC_sample)$y, method="linear", rule=2)
+```
+
+Second, let us construct the **loss function of SSRT estimation**, as follows. This evaluates the **sum of squares of errors** between the estimated **integrated value** and the **observed value**.  
+
+```{r}
+SSRT_estimate_loss_func = function(SSRT_hat, dens_fun, obj){
+  integrated_val = vector(length=6)
+  for (i in 1:6){
+    lower_lim = 0
+    upper_lim = Delta[i] + SSRT_hat 
+    integrated_val[i] = integrate(dens_fun, lower_lim, upper_lim)$value
+  }
+  return(sum((obj-integrated_val)^2, na.rm=T))  ## SSE
+}
+```
+
+Finally, let us find the **minimizer of the loss function**, the **SSRT estimate**. 
+
+```{r}
+optimize(SSRT_estimate_loss_func, interval=c(50,200), dens_fun=HC_dens_function, obj=HC_inhibit)
+optimize(SSRT_estimate_loss_func, interval=c(50,200), dens_fun=LC_dens_function, obj=LC_inhibit)
+```
+
+We get the values around $126 \sim 128$. which are close to those in **table 2**.
+
+
+## Method 2. difference of means
+
+This method is more simpler(although its rationale is less intuitive), in that it only requires the **difference of means** between the **reaction time during control** and **inhibition function**.
+
+We need to estimate the **mean of the inhibition function** using the method similar to above.
+
+```{r}
+cdf_HC_inhibit = approxfun(Delta, HC_inhibit, method="linear", rule=2)
+cdf_LC_inhibit = approxfun(Delta, LC_inhibit, method="linear", rule=2)
+
+inv_cdf_HC_inhibit = function(y){uniroot(function(x){cdf_HC_inhibit(x)-y},interval=c(0,250))$root}
+inv_cdf_HC_inhibit = Vectorize(inv_cdf_HC_inhibit)
+
+inv_cdf_LC_inhibit = function(y){uniroot(function(x){cdf_LC_inhibit(x)-y},interval=c(0,250))$root}
+inv_cdf_LC_inhibit = Vectorize(inv_cdf_LC_inhibit)
+
+U = runif(1000,0.05,0.95)
+HC_inhibit_sample = inv_cdf_HC_inhibit(U)
+LC_inhibit_sample = inv_cdf_LC_inhibit(U)
+```
+
+Next, let us find the difference between means.
+
+```{r}
+mean(HC_sample) - mean(HC_inhibit_sample);
+mean(LC_sample) - mean(LC_inhibit_sample)
+```
+
+The values are not very distinct from those above (in method 1) and are also close to those in **table 2**.
+
+\pagebreak
+# Estimation of control trial parameters using LATER modeling
+
+We can also do the **LATER** modeling, for the control trials. 
+
+## Simulation of the control trial
+
+We can simulate for the control trial using the following function.
+
+```{r}
+simul_control_trial = function(par, tau=60, theta=1, trials=2048, iter_max=200){
+  mu = par[1]; sigma = par[2]
+  activ_level = vector(length=trials)
+  rt_result   = vector(length=trials)
+  for (time in 1:iter_max){
+    activ_level = activ_level + 0.01 * rnorm(trials, mean=mu, sd=sigma) ## accumulation of act. level
+    rt_result[activ_level>theta] = tau + 10*time  ## unit : ms
+    activ_level[activ_level>theta] = -Inf
+  }
+  return(rt_result)
+}
+```
+
+
+## Estimation of $\mu_{go}$ and $\sigma_{go}$
+
+We can construct the loss function as follows, which defines the `Kolmogorov-Smirnov` loss function. 
+
+```{r}
+Kolmo_Smir_loss_between_simul_and_observed = function(par, observed){
+  simul_res = simul_control_trial(par) ## save the simulated data from given parameters
+  ecdf_simul = ecdf(simul_res) ## empricial cdf from the simulated result
+  sum(abs(ecdf_simul(Time)-observed/100), na.rm=T)
+}
+```
+
+Next, we can find minimizer $(\mu, \sigma)$ of the above loss, using the finite-difference optimizer. 
+
+```{r}
+optim(par=c(6,1), Kolmo_Smir_loss_between_simul_and_observed, observed=HC) ## for high constrast
+optim(par=c(6,1), Kolmo_Smir_loss_between_simul_and_observed, observed=LC) ## for low constrast
+```
+
+The estimation of **$\mu$** is quite accurate, in comparison with $table 3$. However, the estimation of **$\sigma$** is not quite accurate, which I cannot explain for the moment.
+
+
+## Demonstration using the estimated values
+
+For the demonstration, we can plot the **density** as follows. 
+
+```{r, warning=FALSE}
+par(mfrow=c(2,2))
+simul_res_HC = simul_control_trial(c(6.09, 4.33))  
+simul_res_LC = simul_control_trial(c(5.10, 2.99))  
+plot(density(HC_sample, bw=5), main="HC recovered")
+plot(density(simul_res_HC, bw=5), main="HC simulated") 
+plot(density(LC_sample, bw=5), main="LC recovered")
+plot(density(simul_res_LC, bw=5), main="LC simulated") 
+```
+
+Next, we can plot the **reciprobit function** as follows.
+
+```{r, warning=FALSE}
+ecdf_simul_HC = ecdf(simul_res_HC)
+ecdf_simul_LC = ecdf(simul_res_LC)
+simul_probit_HC = qnorm(ecdf_simul_HC(Time))
+simul_probit_LC = qnorm(ecdf_simul_LC(Time))
+par(mfrow=c(1,2))
+
+## Recovered
+plot(invTime, HC_probit, 
+     xlim=rev(range(invTime)), pch=16, labels = FALSE,
+     main="Recovered Latency", xlab="Sccadic Latency(ms)", ylab="Cumulative probability")
+points(invTime, LC_probit, xlim=rev(range(1/Time)), pch=1)
+legend("bottomright", legend=c("High Contrast", "Low Contrast"),
+       pch=c(16,1), box.lty=0)
+abline(h=qnorm(50/100)) # add median line
+axis(1, at = 1/x_ticks, labels=x_ticks, tick=T) # add x labels
+axis(2, at = qnorm(y_ticks/100), labels = y_ticks, tick=T) # add y labels
+
+## Simulated
+plot(invTime, simul_probit_HC, 
+     xlim=rev(range(invTime)), pch=16, labels = FALSE,
+     main="Simulated Distribution", xlab="Sccadic Latency(ms)", ylab="Cumulative probability")
+points(invTime, simul_probit_LC, xlim=rev(range(1/Time)), pch=1)
+legend("bottomright", legend=c("High Contrast", "Low Contrast"),
+       pch=c(16,1), box.lty=0)
+abline(h=qnorm(50/100)) # add median line
+axis(1, at = 1/x_ticks, labels=x_ticks, tick=T) # add x labels
+axis(2, at = qnorm(y_ticks/100), labels = y_ticks, tick=T) # add y labels
+```
